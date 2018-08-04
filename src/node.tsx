@@ -18,7 +18,7 @@ class UITreeNode extends Component {
           className={cx('collapse', collapsed ? 'caret-right' : 'caret-down')}
           onMouseDown={e => e.stopPropagation()}
           onClick={this.handleCollapse}
-        />
+        >a</span>
       );
     }
 

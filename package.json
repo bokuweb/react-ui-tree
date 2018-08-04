@@ -9,6 +9,8 @@
     "deploy": "rm -rf .publish && npm run build && github-pages-deploy",
     "pretest": "npm run build",
     "prepublish": "npm test",
+    "storybook": "start-storybook -p 6026 -s ./public",
+    "build-storybook": "build-storybook && npm run copy-story-assets",
     "test": "mocha"
   },
   "github-pages-deploy": {
@@ -34,6 +36,14 @@
     "react-dom": "^16.0.0"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.4.10",
+    "@storybook/addon-options": "^3.4.10",
+    "@storybook/addon-storysource": "^3.4.10",
+    "@storybook/react": "^3.4.10",
+    "@types/react": "^16.4.7",
+    "@types/react-dom": "^16.0.6",
+    "@types/storybook__addon-actions": "^3.4.0",
+    "@types/storybook__react": "^3.0.8",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
@@ -44,10 +54,13 @@
     "github-pages-deploy": "^0.0.3",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
+    "light-ts-loader": "^1.1.2",
     "mocha": "^3.5.3",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "react-powerplug": "^1.0.0-rc.1",
     "style-loader": "^0.18.2",
+    "typescript": "^3.0.1",
     "webpack": "^3.3.0",
     "webpack-dev-server": "^2.5.1"
   },

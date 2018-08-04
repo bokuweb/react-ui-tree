@@ -1,14 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import Tree from './tree';
 import Node from './node';
 
-class UITree extends Component {
-  static propTypes = {
-    tree: PropTypes.object.isRequired,
-    paddingLeft: PropTypes.number,
-    renderNode: PropTypes.func.isRequired
-  };
+class UITree extends React.Component {
 
   static defaultProps = {
     paddingLeft: 20
