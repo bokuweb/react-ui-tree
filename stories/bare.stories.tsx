@@ -2,7 +2,7 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { State } from "react-powerplug";
 
-import Tree from "../src/react-ui-tree";
+import { ReTree, TreeProps } from "../src";
 
 const tree = {
   module: "react-ui-tree",
@@ -103,10 +103,10 @@ const initial = { tree };
 storiesOf("organisms|FileTree", module).add("basic", () => (
   <State initial={initial}>
     {({ state, setState }) => (
-      <Tree
+      <ReTree
+        paddingLeft={10}
         tree={state.tree}
-        onChange={tree => {
-          console.log(tree);
+        onChange={(tree) => {
           setState({ tree });
         }}
         renderNode={node => {

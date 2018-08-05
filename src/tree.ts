@@ -1,73 +1,95 @@
-var Tree = require('js-tree');
-var proto = Tree.prototype;
+const JsTree = require("js-tree");
 
-proto.updateNodesPosition = function() {
-  var top = 1;
-  var left = 1;
-  var root = this.getIndex(1);
-  var self = this;
+export type Placement = "before" | "after" | "prepend" | "append";
 
-  root.top = top++;
-  root.left = left++;
+export interface TreeNode {
+  module: string;
+  children?: Array<TreeNode>;
+  collapsed?: boolean;
+  leaf?: boolean;
+}
 
-  if (root.children && root.children.length) {
-    walk(root.children, root, left, root.node.collapsed);
+export interface NodeIndex {
+  id: number;
+  node: TreeNode;
+  height?: number;
+  children?: Array<TreeNode>;
+}
+export class Tree extends JsTree {
+  constructor(tree: TreeNode) {
+    super(tree);
   }
 
-  function walk(children, parent, left, collapsed) {
-    var height = 1;
-    children.forEach(function(id) {
-      var node = self.getIndex(id);
-      if (collapsed) {
-        node.top = null;
-        node.left = null;
-      } else {
-        node.top = top++;
-        node.left = left;
-      }
+  updateNodesPosition() {
+    let top = 1;
+    let left = 1;
+    let root = this.getIndex(1);
+    let self = this;
 
-      if (node.children && node.children.length) {
-        height += walk(
-          node.children,
-          node,
-          left + 1,
-          collapsed || node.node.collapsed
-        );
-      } else {
-        node.height = 1;
-        height += 1;
-      }
-    });
+    root.top = top++;
+    root.left = left++;
 
-    if (parent.node.collapsed) parent.height = 1;
-    else parent.height = height;
-    return parent.height;
-  }
-};
+    if (root.children && root.children.length) {
+      walk(root.children, root, left, root.node.collapsed);
+    }
 
-proto.move = function(fromId, toId, placement) {
-  if (fromId === toId || toId === 1) return;
+    function walk(
+      children: Array<TreeNode>,
+      parent: NodeIndex,
+      left: number,
+      collapsed: boolean
+    ) {
+      let height = 1;
+      children.forEach(id => {
+        let node = self.getIndex(id);
+        if (collapsed) {
+          node.top = null;
+          node.left = null;
+        } else {
+          node.top = top++;
+          node.left = left;
+        }
 
-  var obj = this.remove(fromId);
-  var index = null;
+        if (node.children && node.children.length) {
+          height += walk(
+            node.children,
+            node,
+            left + 1,
+            collapsed || node.node.collapsed
+          );
+        } else {
+          node.height = 1;
+          height += 1;
+        }
+      });
 
-  if (placement === 'before') index = this.insertBefore(obj, toId);
-  else if (placement === 'after') index = this.insertAfter(obj, toId);
-  else if (placement === 'prepend') index = this.prepend(obj, toId);
-  else if (placement === 'append') index = this.append(obj, toId);
-
-  // todo: perf
-  this.updateNodesPosition();
-  return index;
-};
-
-proto.getNodeByTop = function(top) {
-  var indexes = this.indexes;
-  for (var id in indexes) {
-    if (indexes.hasOwnProperty(id)) {
-      if (indexes[id].top === top) return indexes[id];
+      if (parent.node.collapsed) parent.height = 1;
+      else parent.height = height;
+      return parent.height;
     }
   }
-};
 
-module.exports = Tree;
+  move(fromId: number, toId: number, placement: Placement) {
+    if (fromId === toId || toId === 1) return;
+
+    const obj = this.remove(fromId);
+    let index = null;
+
+    if (placement === "before") index = this.insertBefore(obj, toId);
+    else if (placement === "after") index = this.insertAfter(obj, toId);
+    else if (placement === "prepend") index = this.prepend(obj, toId);
+    else if (placement === "append") index = this.append(obj, toId);
+
+    this.updateNodesPosition();
+    return index;
+  }
+
+  getNodeByTop(top: number) {
+    const indexes = this.indexes;
+    for (const id in indexes) {
+      if (indexes.hasOwnProperty(id)) {
+        if (indexes[id].top === top) return indexes[id];
+      }
+    }
+  }
+}

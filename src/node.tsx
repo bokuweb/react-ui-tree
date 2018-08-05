@@ -1,31 +1,47 @@
-import cx from 'classnames';
-import React, { Component } from 'react';
+import * as React from "react";
+import { Tree, NodeIndex } from "./tree";
 
-class UITreeNode extends Component {
-  constructor(props) {
+export interface TreeNodeProps {
+  paddingLeft: number;
+  tree: Tree;
+  index: NodeIndex;
+  dragging?: number | null;
+  onCollapse?: (nodeId: number) => void;
+  onDragStart?: (
+    nodeId: number,
+    ref: HTMLElement | null,
+    e: React.MouseEvent<HTMLElement>
+  ) => void;
+}
+
+export class Node extends React.Component<TreeNodeProps> {
+  innerRef!: React.RefObject<HTMLDivElement>;
+
+  constructor(props: TreeNodeProps) {
     super(props);
     this.innerRef = React.createRef();
+    this.onCollapse = this.onCollapse.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
   }
 
-  renderCollapse = () => {
+  renderCollapse() {
     const { index } = this.props;
-
     if (index.children && index.children.length) {
       const { collapsed } = index.node;
-
       return (
         <span
-          className={cx('collapse', collapsed ? 'caret-right' : 'caret-down')}
+          // className={cx('collapse', collapsed ? 'caret-right' : 'caret-down')}
           onMouseDown={e => e.stopPropagation()}
-          onClick={this.handleCollapse}
-        >a</span>
+          onClick={this.onCollapse}
+        >
+          a
+        </span>
       );
     }
-
     return null;
-  };
+  }
 
-  renderChildren = () => {
+  renderChildren(): JSX.Element | null {
     const { index, tree, dragging } = this.props;
 
     if (index.children && index.children.length) {
@@ -37,9 +53,8 @@ class UITreeNode extends Component {
         <div className="children" style={childrenStyles}>
           {index.children.map(child => {
             const childIndex = tree.getIndex(child);
-
             return (
-              <UITreeNode
+              <Node
                 tree={tree}
                 index={childIndex}
                 key={childIndex.id}
@@ -55,24 +70,21 @@ class UITreeNode extends Component {
     }
 
     return null;
-  };
+  }
 
   render() {
     const { tree, index, dragging } = this.props;
     const { node } = index;
-    const styles = {};
-
     return (
       <div
-        className={cx('m-node', {
-          placeholder: index.id === dragging
-        })}
-        style={styles}
+      // className={cx('m-node', {
+      //   placeholder: index.id === dragging
+      // })}
       >
         <div
-          className="inner"
+          className="__rt_inner"
           ref={this.innerRef}
-          onMouseDown={this.handleMouseDown}
+          onMouseDown={this.onMouseDown}
         >
           {this.renderCollapse()}
           {tree.renderNode(node)}
@@ -82,23 +94,19 @@ class UITreeNode extends Component {
     );
   }
 
-  handleCollapse = e => {
+  onCollapse(e: React.MouseEvent<HTMLElement>) {
     e.stopPropagation();
     const nodeId = this.props.index.id;
-
     if (this.props.onCollapse) {
       this.props.onCollapse(nodeId);
     }
-  };
+  }
 
-  handleMouseDown = e => {
+  onMouseDown(e: React.MouseEvent<HTMLElement>) {
     const nodeId = this.props.index.id;
     const dom = this.innerRef.current;
-
     if (this.props.onDragStart) {
       this.props.onDragStart(nodeId, dom, e);
     }
-  };
+  }
 }
-
-module.exports = UITreeNode;

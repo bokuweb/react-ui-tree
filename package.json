@@ -65,8 +65,6 @@
     "webpack-dev-server": "^2.5.1"
   },
   "dependencies": {
-    "classnames": "^2.2.5",
-    "js-tree": "^2.0.1",
-    "prop-types": "^15.5.10"
+    "js-tree": "^2.0.1"
   }
 }

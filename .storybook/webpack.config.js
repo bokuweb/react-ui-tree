@@ -6,15 +6,15 @@ module.exports = (baseConfig, env, defaultConfig) => {
     loaders: [
       {
         loader: require.resolve("@storybook/addon-storysource/loader"),
-        options: { parser: "typescript" },
-      },
+        options: { parser: "typescript" }
+      }
     ],
-    enforce: "pre",
+    enforce: "pre"
   });
 
   defaultConfig.module.rules.push({
     test: /.*\.(ts|tsx)$/,
-    loader: require.resolve("light-ts-loader"),
+    loader: require.resolve("light-ts-loader")
   });
 
   defaultConfig.resolve.extensions.push(".ts", ".tsx");
